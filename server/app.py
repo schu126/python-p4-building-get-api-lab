@@ -18,21 +18,41 @@ db.init_app(app)
 def index():
     return '<h1>Bakery GET API</h1>'
 
-@app.route('/bakeries')
+@app.route('/bakeries', methods=['GET'])
 def bakeries():
-    return ''
+    bakeries = Bakery.query.all()
+    all_bakeries = []
+    for bakery in bakeries:
+        all_bakeries.append(bakery.to_dict())
+
+    return all_bakeries, 200
 
 @app.route('/bakeries/<int:id>')
 def bakery_by_id(id):
-    return ''
+    bakery = Bakery.query.filter(Bakery.id == id).first()
 
+    bakery_dict = bakery.to_dict()
+    return bakery_dict, 200
+
+    # if bakery == None:
+    #     return {"error": "Bakery not found"}, 404
+   
+    # return bakery.to_dict(), 200
+    
+    
 @app.route('/baked_goods/by_price')
 def baked_goods_by_price():
-    return ''
+    price_order = BakedGood.query.order_by(BakedGood.price.desc()).all()
+    goods_desc = []
+    for good in price_order:
+        goods_desc.append(good.to_dict())
+
+    return goods_desc, 200
 
 @app.route('/baked_goods/most_expensive')
 def most_expensive_baked_good():
-    return ''
+    price_order = BakedGood.query.order_by(BakedGood.price.desc()).first()
+    return price_order.to_dict()
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
